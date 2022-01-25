@@ -97,10 +97,10 @@ Commons functions to import datasets and store as data frames are *read.table()*
 
 ```{r importdata}
 # Absolute file path (not recommended)
-#read.csv("/Users/lmm89/OneDrive/Duke_University/7_Spring2021/ENV872_EDA/GitRepo_EDA_S2021/Environmental_Data_Analytics_2021/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+read.csv("C:/Users/meili/OneDrive - Duke University/EDA/Environmental_Data_Analytics_2022/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Relative file path (friendly for users regardless of machine)
-USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")   
+USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")   
 #For knitting the .Rmd file you need to added an extra "." to the relative path
 # R Markdown documents are compiled in separate R sessions to enhance reproducibility, so you current R console has nothing to do with the compilation of the R Markdown documents.
 
@@ -137,13 +137,14 @@ colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime",
                               "gage.height.min", "gage.height.min.approval", 
                               "gage.height.mean", "gage.height.mean.approval")
 str(USGS.flow.data)
-dim(USGS.flow.data)
-length(USGS.flow.data)
+dim(USGS.flow.data) #the number of rows and columns
+length(USGS.flow.data) #the number of columns
 
 head(USGS.flow.data)
-head(USGS.flow.data, 10)
-tail(USGS.flow.data, 5)
-USGS.flow.data[30000:30005, c(3, 8, 14)]
+tail(USGS.flow.data)
+head(USGS.flow.data, 10) #shows the first 10 rows
+tail(USGS.flow.data, 5) #shows last 5 rows
+USGS.flow.data[30000:30005, c(3, 8, 14)] #shows the selected rows with columns 3, 8, and 14
 
 class(USGS.flow.data$datetime)
 class(USGS.flow.data$discharge.mean)
@@ -154,7 +155,7 @@ summary(USGS.flow.data)  #could point to column only with $
 ```
 
 What happened to blank cells in the spreadsheet when they were imported into R?
-> Answer: 
+> Answer: They are input as NA
 
 ## Adjusting Datasets
 
@@ -168,12 +169,12 @@ summary(USGS.flow.data$gage.height.mean)
 ```
 Question: What types of research questions might make it favorable to remove NAs from a dataset, and what types of research questions might make it favorable to retain NAs in the dataset?
 
-> Answer: 
+> Answer: Wouldn't always remove for a time series analyis
 
 ```{r removeNA}
-USGS.flow.data.complete <- na.omit(USGS.flow.data)
+USGS.flow.data.complete <- na.omit(USGS.flow.data) #na.omit will help omit the na from the data; create a new object to store the changed data
 dim(USGS.flow.data)
-dim(USGS.flow.data.complete)
+dim(USGS.flow.data.complete) #can see that rows have changed from original dataset as NAs have been removed
 
 mean(USGS.flow.data.complete$discharge.mean)
 sd(USGS.flow.data.complete$discharge.mean)
@@ -193,17 +194,17 @@ Formatting of dates in R:
 %Y  4-digit year
 %a  abbreviated weekday
 %A  unabbreviated weekday
-%b  abbreviated month
-%B  unabbreviated month
+%b  abbreviated month    >abbreviated month (Jan)
+%B  unabbreviated month  > not abbreviated month (January)
 
 In some cases when dates are provided as integers, you may need to provide an origin for your dates. Beware: the "origin" date for Excel (Windows), Excel (Mac), R, and MATLAB all have different origin dates. Google this if it comes up.
 
 ```{r formatDate}
 help(as.Date)
 
+USGS.flow.data$datetime[1:10] #check the format of how the datetime is written in the original data
 
-USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") 
-```
+USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y") #doing this for the original data set
 
 Note that for every date prior to 1969, R has assigned the date in the 2000s rather than the 1900s. This can be fixed with an `ifelse` statement inside a function. Run through the code below and write what is happening in the comment above each line.
 
@@ -214,7 +215,7 @@ USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
 #
 create.early.dates <- (function(d) {
        paste0(ifelse(d > 191226,"19","20"),d)
-       })
+       }) #to fix any of the dates where the year is greater than 1999
 #
 USGS.flow.data$datetime <- create.early.dates(USGS.flow.data$datetime)
 
@@ -230,7 +231,7 @@ We just edited our raw dataset into a processed form. We may want to return to t
 
 ```{r savingdata}
 # Note the added "." again for .Rmd 
-write.csv(USGS.flow.data, file = "../Data/Processed/USGS_Site02085000_Flow_Processed.csv", row.names=FALSE)
+write.csv(USGS.flow.data, file = "./Data/Processed/USGS_Site02085000_Flow_Processed.csv", row.names=FALSE)
 
 ```
 
