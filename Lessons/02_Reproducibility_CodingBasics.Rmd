@@ -1,7 +1,7 @@
 ---
 title: "2: Reproducibility and Coding Basics"
 author: "Environmental Data Analytics | John Fay and Luana Lima | Developed by Kateri Salk"
-date: "Spring 2022"
+date: "Spring 2021"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -135,6 +135,7 @@ Within your R code, it is often useful to include notes about your workflow. So 
 # I am demonstrating a comment here. 
 
 1 + 1 # This is a simple math problem
+#1+1
 ```
 
 ### Functions
@@ -142,10 +143,14 @@ R functions are the major tool used in R. Functions can do virtually unlimited t
 
 ```{r}
 seq(1, 10)
+seq(-1,5)
+neg_seqence <- seq(-1,5)
 ten_sequence <- seq(1, 10)
 ten_sequence
+neg_seqence
 
 seq(1, 10, 2) # from, to, by
+seq(-1,5,2) #from, to, by
 ```
 
 The basic form of a function is `functionname()`, and the packages we will use in this class will use these basic forms. However, there may be situations when you will want to create your own function. Below is a description of how to write functions through the metaphor of creating a recipe (credit: @IsabellaGhement on Twitter). 
@@ -165,11 +170,18 @@ recipe1 <- function(x){
   return(mix)
 }
 
+recipe11 <- function(x){
+  mix11 <- x+4
+  return(mix11)
+}
+
 # Bake the recipe
 simplemeal <- recipe1(5)
+simplemeal11 <- recipe11(6)
 
 # Serve the recipe
 simplemeal
+simplemeal11
 ```
 
 Two single ingredient recipes, baked at the same time: 
@@ -226,7 +238,7 @@ meal2 <- recipe4(2); meal2
 meal3 <- recipe5(3); meal3
 
 recipe6 <- function(x){
-  ifelse(x<3, x*2, x/2) #log_exp, if TRUE, if FALSE
+  ifelse(x<3, x*2, x/2) #logical expression, if TRUE, if FALSE
   
 }
 
