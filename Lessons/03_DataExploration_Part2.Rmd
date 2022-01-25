@@ -29,9 +29,9 @@ getwd()
 library(tidyverse)
 
 # 3. Import datasets
-USGS.flow.data <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv")
+USGS.flow.data <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv") #when data stored as .csv, dates are saved as CHARACTERS rather than dates --> must tell R that dates are dates!
 
-#View(USGS.flow.data)
+View(USGS.flow.data)
 # Alternate option: click on data frame in Environment tab
 
 colnames(USGS.flow.data)
@@ -41,28 +41,36 @@ dim(USGS.flow.data)
 # Check our date column
 class(USGS.flow.data$datetime)
 
-USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y-%m-%d") 
-class(USGS.flow.data$datetime)
+USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y-%m-%d") #changing class of datetime column into dates 
+class(USGS.flow.data$datetime) #now class is a date objet!
 
 ```
 
 
 ## Visualization for Data Exploration
 
+```{r}
+#remember when you begin data exploration, to keep in mind the class of the values in your dataset --> is it categorical? numerical? this is important to know before beginning visualization!
+```
+
+
 Although the `summary()` function is helpful in getting an idea of the spread of values in a numeric dataset, it can be useful to create visual representations of the data to help form hypotheses and direct downstream data analysis. Below is a summary of the useful types of graphs for data exploration.
 
 Note: each of these approaches utilize the package "ggplot2". We will be covering the syntax of ggplot in a later lesson, but for now you should familiarize yourself with the functionality of what each command is doing.
 
-### Bar Chart (function: geom_bar)
+### Bar Chart (function: geom_bar) > good for categorical data
 
 Visualize count data for categorical variables. 
 
 ```{r, fig.height = 3, fig.width = 4}
 ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
-  geom_bar()
+  geom_bar() ##ggplot() is function, first factor is data that you will plot, aes() is to set the data aeshetics/specific portion of data to plot and asking for the mean, geom_bar() is saying what type of plot
+
+ggplot(na.omit(USGS.flow.data), aes(x = discharge.mean.approval)) +
+  geom_bar() #this is tweeking the data so that no NAs are in the graphed data
 ```
 
-### Histogram (function: geom_histogram)
+### Histogram (function: geom_histogram) > for value intervals
 
 Visualize distributions of values for continuous numerical variables. What is happening in each line of code? Insert a comment above each line.
 
@@ -71,22 +79,23 @@ Visualize distributions of values for continuous numerical variables. What is ha
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean))
 
-#
+#binwidth argument specific to histogram, tells R to go beyond set binwidth to x units from the mean
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), binwidth = 10)
 
-#
+#this sets the number of bins you want in your chart; generally use between 5-20 bins
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), bins = 20)
 
-#
+#scale_x_continuous zooms in on where the data is within histogram (sets the min and max on the x-axis)
 ggplot(USGS.flow.data, aes(x = discharge.mean)) +
   geom_histogram(binwidth = 10) + 
   scale_x_continuous(limits = c(0, 500))
   
 #
 ggplot(USGS.flow.data) +
-  geom_histogram(aes(x = gage.height.mean))
+  geom_histogram(aes(x = gage.height.mean)) +
+  scale_x_continuous(limits = c(0,12))
 
 ```
 ### Frequency line graph (function: geom_freqpoly)
@@ -94,21 +103,23 @@ ggplot(USGS.flow.data) +
 An alternate to a histogram is a frequency polygon graph (distributions of values for continuous numerical variables). Instead of displaying bars,  counts of continuous variables are displayed as lines. This is advantageous if you want to display multiple variables or categories of variables at once.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+#can change color of line, lty is the line type
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean), bins = 50) +
-  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "darkgray") +
+  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "red") +
   geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
   scale_x_continuous(limits = c(0, 10))
 
-#
+#theme() can add a legend and adjust position; within color, it looks for the unique values and color each record by the unique values
+
+#can set color to a categorical value and set two different categories on the same plot
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
   scale_x_continuous(limits = c(0, 10)) +
   theme(legend.position = "top")
 
 ```
-### Box-and-whisker plots (function: geom_boxplot, geom_violin)
+### Box-and-whisker plots (function: geom_boxplot, geom_violin) > summary of our data
 
 A box-and-whisker plot is yet another alternative to histograms (distributions of values for continuous numerical variables). These plots consist of: 
 
@@ -123,15 +134,16 @@ A box-and-whisker plot is yet another alternative to histograms (distributions o
 An alternate option is a violin plot, which displays density distributions, somewhat like a hybrid of the box-and-whiskers and the frequency polygon plot.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+#middle line --> median of the records -show distribution of values
+#box is showing the quantiles
 ggplot(USGS.flow.data) +
-  geom_boxplot(aes(x = gage.height.mean.approval, y = gage.height.mean))
+  geom_boxplot(aes(x = gage.height.mean.approval, y = gage.height.mean)) 
 
-#
+#takes different slices of data and looking at distribution; cut-width takes distribution of data and shows distribution of values within the requested data
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1)))
 
-#
+#adding a little more distribution (see range of values and distribution within range); width is the amount of data at each slice
 ggplot(USGS.flow.data) +
   geom_violin(aes(x = gage.height.mean.approval, y = gage.height.mean), 
               draw_quantiles = c(0.25, 0.5, 0.75))
