@@ -7,7 +7,7 @@ geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
 ---
-
+##git pull upstream main in terminal
 
 ## Lesson Objectives
 1. Set up a data analysis session in RStudio
@@ -34,7 +34,7 @@ getwd()
 If your working directory is not set to the folder you want, you have several options. The first is to directly code your working directory. You may do this by defining an absolute file path (below). What are the pitfalls of using an absolute file path?
 
 ```{r}
-# Absolute file path is commented out
+# Absolute file path is commented out - when you write out each folder by name = can set this when the working directory is not what you want it to be
 setwd("/Users/lmm89/OneDrive/Duke_University/7_Spring2021/ENV872_EDA/GitRepo_EDA_S2021/Environmental_Data_Analytics_2021")
 ```
 
@@ -99,8 +99,10 @@ Commons functions to import datasets and store as data frames are *read.table()*
 # Absolute file path (not recommended)
 read.csv("C:/Users/meili/OneDrive - Duke University/EDA/Environmental_Data_Analytics_2022/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
-# Relative file path (friendly for users regardless of machine)
-USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")   
+# Relative file path (friendly for users regardless of machine) - use this when collaborating with a project, will work on multiple machines (significance of the period . --> "." means staying in current directory, ".." means moving to the parent folder)
+USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv",stringsAsFactors = TRUE)
+
+#"./Data/Raw/USGS_Site02085000_Flow_Raw.csv"  
 #For knitting the .Rmd file you need to added an extra "." to the relative path
 # R Markdown documents are compiled in separate R sessions to enhance reproducibility, so you current R console has nothing to do with the compilation of the R Markdown documents.
 
