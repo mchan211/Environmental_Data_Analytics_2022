@@ -27,8 +27,8 @@ getwd()
 library(tidyverse)
 
 
-Neonics <- read.csv("../Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv",stringsAsFactors=TRUE)
-Litter <- read.csv("../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv",stringsAsFactors=TRUE)
+Neonics <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv",stringsAsFactors=TRUE)
+Litter <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv",stringsAsFactors=TRUE)
 
 ```
 
@@ -86,7 +86,7 @@ class(Neonics$Conc.1..Author.)
 
 ```
 
-> Answer: The class of conc.1..Author is a factor. A factor represents categorical data (many "levels" within a factor. In this dataset, each individual concentration is considered a separate level with the conc.1..author factor. These values were saved as a factor rather than numerical because each concentration value is linked to a specific type as well as unit. ??
+> Answer: The class of conc.1..Author is a factor. A factor represents categorical data (many "levels" within a factor. In this dataset, each individual concentration is considered a separate level with the conc.1..author factor. I'm not sure why R would class Conc.1..Author as a factor rather than numeric. My guess is that these concentration values are set to associate with other concentration factors in different columns listed in the data set. So when R processes the data, it sees these links and determines that Conc.1..Author is a factor (categorical).
 
 
 
