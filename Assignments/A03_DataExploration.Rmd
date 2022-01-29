@@ -27,9 +27,11 @@ getwd()
 library(tidyverse)
 
 
-Neonics <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv",stringsAsFactors=TRUE)
+Neonics <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv",
+                    stringsAsFactors=TRUE)
 
-Litter <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv",stringsAsFactors=TRUE)
+Litter <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv",
+                   stringsAsFactors=TRUE)
 
 ```
 
