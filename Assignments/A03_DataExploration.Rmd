@@ -76,7 +76,7 @@ summary(Neonics$Effect)
 
 ```{r}
 
-summary(Neonics$Species.Common.Name)
+summary(Neonics$Species.Common.Name, maxsum=6)
 
 ```
 
