@@ -73,7 +73,7 @@ Here are the relevant commands used in the `filter` function. Add some notes to 
 `<`
 >less than equal to
 `<=`
->greanter than
+>greater than
 `>`
 >greater than equal to
 `>=`
