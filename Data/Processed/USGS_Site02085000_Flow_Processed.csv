@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "agency_cd","site_no","datetime","X165986_00060_00001","X165986_00060_00001_cd","X165987_00060_00002","X165987_00060_00002_cd","X84936_00060_00003","X84936_00060_00003_cd","X84937_00065_00001","X84937_00065_00001_cd","X84938_00065_00002","X84938_00065_00002_cd","X84939_00065_00003","X84939_00065_00003_cd"
+=======
+"agency_cd","site_no","datetime","discharge.max","discharge.max.approval","discharge.min","discharge.min.approval","discharge.mean","discharge.mean.approval","gage.height.max","gage.height.max.approval","gage.height.min","gage.height.min.approval","gage.height.mean","gage.height.mean.approval"
+>>>>>>> b3c7106116c07efb5453f2e1b6ba3c74dfab9fdd
 "USGS",2085000,1927-10-01,NA,"",NA,"",39,"A",NA,"",NA,"",NA,""
 "USGS",2085000,1927-10-02,NA,"",NA,"",39,"A",NA,"",NA,"",NA,""
 "USGS",2085000,1927-10-03,NA,"",NA,"",39,"A",NA,"",NA,"",NA,""
