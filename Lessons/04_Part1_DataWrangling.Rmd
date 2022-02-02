@@ -200,8 +200,9 @@ Sometimes we will want to perform multiple functions on a single dataset on our 
 Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the data for Peter and Paul lakes, *then* select temperature and observation information, and *then* add a column for temperature in Fahrenheit: 
 
 ```{r}
+#pipe is like a chain of operations to use you must use '%>%'
 NTL.phys.data.processed <- 
-  NTL.phys.data %>%
+  NTL.phys.data %>% #only need to specify the name of your dataframe once in a pipe
   filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
   select(lakename, sampledate:temperature_C) %>%
   mutate(temperature_F = (temperature_C*9/5) + 32)

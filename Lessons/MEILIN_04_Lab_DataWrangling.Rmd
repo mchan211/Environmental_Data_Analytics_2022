@@ -82,17 +82,20 @@ Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the dat
 NTL.phys.data.processed <- 
   NTL.phys.data %>%
   filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
-  select(lakename, sampledate:temperature_C) %>%
+  select(lakename, sampledate:temperature_C) %>% #remember - select() is for columns, filter() is for rows
   mutate(temperature_F = (temperature_C*9/5) + 32)
 
 #Exercise 3: Using a pipe filter NTL.phys.data for Tuesday Lake from 1990 through 1999 only for July 
 
-
-
-
+NTL.phys.data.90s.TuesinJuly <- NTL.phys.data.90s.Tues %>%
+  filter(month(sampledate)==7)
+ 
 
 #Exercise 4: Using the data from part 3, a pipe and the summarise() function find the mean surface temperature (hints: you will need to add another filter for depth==0). Make sure you eliminate NAs before computing the means
-
+NTL.phys.data.90s.TuesinJuly.surf <- NTL.phys.data.90s.TuesinJuly %>%
+  filter(depth ==0) %>%
+  filter(!is.na(temperature_C)) %>% #using ! pulls all observations that are NOT NA
+  summarise(mean = mean(temperature_C)) #this is adding a new column
   
 ```
 
@@ -102,9 +105,10 @@ For gather we will use `pivot_longer` and for spread we will use `pivot_wider`.
 
 ```{r}
 #Exercise 5: gather irradiance data (measured in the water column and measured on the deck of the sampling boat) into one column using pivot_longer
-
+NTL.phys.data.ex5 <- pivot_longer(NTL.phys.data, irradianceWater:irradianceDeck, values_to = "irradianceAll")
 
 #Exercise 6: spread temperatureC into more than one column based on the depth
+NTL.phys.data.ex6 <- pivot_wider(NTL.phys.data,)
 
 ```
 
