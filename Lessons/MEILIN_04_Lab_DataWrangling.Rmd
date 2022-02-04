@@ -108,7 +108,8 @@ For gather we will use `pivot_longer` and for spread we will use `pivot_wider`.
 NTL.phys.data.ex5 <- pivot_longer(NTL.phys.data, irradianceWater:irradianceDeck, values_to = "irradianceAll")
 
 #Exercise 6: spread temperatureC into more than one column based on the depth
-NTL.phys.data.ex6 <- pivot_wider(NTL.phys.data,)
+class(NTL.phys.data$depth)
++NTL.phys.data.ex6 <- pivot_wider(NTL.phys.data, values_from = temperature_C)
 
 ```
 
