@@ -29,9 +29,9 @@ getwd()
 library(tidyverse)
 library(lubridate)
 EPAair.O3.18 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
-EPAair.O3.19 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_O3_NC2019_raw.csv")
-EPAair.PM25.18 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_PM25_NC2018_raw.csv")
-EPAair.PM25.19 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_PM25_NC2019_raw.csv")
+EPAair.O3.19 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+EPAair.PM25.18 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPAair.PM25.19 <- read.csv("../Environmental_Data_Analytics_2022/Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
 # EPAair.O3.18
