@@ -47,17 +47,17 @@ print(O3plot1)
 
 O3plot2 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_bw()
+  theme_bw() #background is white with light gridlines
 print(O3plot2)
 
 O3plot3 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_light()
+  theme_light() 
 print(O3plot3)
 
 O3plot4 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_classic()
+  theme_classic() #no gridlines
 print(O3plot4)
 ```
 
@@ -71,17 +71,17 @@ If you would like to set a common theme across all plots in your analysis sessio
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 mytheme <- theme_classic(base_size = 14) +
-  theme(axis.text = element_text(color = "black"), 
+  theme(axis.text = element_text(color = "black"),#changing the text color of axis labels
         legend.position = "top") #alternative: legend.position + legend.justification
 
 # options: call the theme in each plot or set the theme at the start. 
 
 O3plot5 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  mytheme
+  mytheme #setting up a theme - can be input into any other plots you set up and it will follow the theme
 print(O3plot5)  
 
-theme_set(mytheme)
+theme_set(mytheme) #this will set the theme for the rest of your plots to follow the theme you set
 
 O3plot6 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone))
@@ -95,16 +95,16 @@ While the theme allows us to set multiple aspects of plots, ggplot allows us to 
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 O3plot7 <- ggplot(EPAair, aes(x = Date, y = Ozone)) +
-  geom_hline(yintercept = 50, lty = 2) +
+  geom_hline(yintercept = 50, lty = 2) + #hline is good if you want to categorize
   geom_hline(yintercept = 100, lty = 2) +
-  geom_point(alpha = 0.5, size = 1.5) +
-  geom_text(x = as.Date("2020-01-01"), y = 45, label = "good", hjust = 1, fontface = "bold") +   # hjust = 1 means left align
+  geom_point(alpha = 0.5, size = 1.5) + #alpha is the transparency of your point
+  geom_text(x = as.Date("2020-01-01"), y = 45, label = "good", hjust = 1, fontface = "bold") #add text into your plot+   # hjust = 1 means left align
   geom_text(x = as.Date("2020-01-01"), y = 95, label = "moderate", hjust = 1, fontface = "bold") +
   geom_text(x = as.Date("2020-01-01"), y = 120, label = "unhealthy (sensitive groups)", hjust = 1, fontface = "bold") +
-  scale_x_date(limits = as.Date(c("2018-01-01", "2019-12-31")), 
-    date_breaks = "2 months", date_labels = "%b %y") +
+  scale_x_date(limits = as.Date(c("2018-01-01", "2019-12-31")), #plots specific section of your data
+    date_breaks = "2 months", date_labels = "%b %y") + #sets breaks within date and specifies how the data will be represented
   ylab(expression("O"[3]* " AQI Value")) +
-  theme(axis.text.x = element_text(angle = 45,  hjust = 1))
+  theme(axis.text.x = element_text(angle = 45,  hjust = 1)) #changing the angle of your text
 print(O3plot7)  
 
 ```
@@ -152,9 +152,9 @@ nationalparkcolors (package)
 * https://github.com/katiejolly/nationalparkcolors
 
 ```{r, warning = FALSE}
-# install.packages("viridis")
-# install.packages("RColorBrewer")
-# install.packages("colormap")
+install.packages("viridis")
+install.packages("RColorBrewer")
+install.packages("colormap")
 library(viridis)
 library(RColorBrewer)
 library(colormap)
@@ -175,13 +175,14 @@ print(NvsP)
 NvsP2 <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth, shape = lakename)) +
   geom_point(alpha = 0.7, size = 2.5) +
-  #labs() + # change your legend labels here
+  labs(color = "Depth", shape = "Lake name") + # change your legend labels here
   scale_shape_manual(values = c(15, 17)) +
   #scale_color_distiller(palette = "Blues", direction = 1) + # use scale_color_brewer for discrete variables
   scale_color_viridis(option = "magma", direction = -1) +
   theme(legend.position = "right", 
         legend.text = element_text(size = 12), legend.title = element_text(size = 12))
 print(NvsP2)
+
 
 # change your y axis label to list concentration in micrograms per liter
 # remove your x axis label
@@ -206,7 +207,7 @@ In situations where facets don't fill our needs to place multiple plots on a pag
 A useful guide for aligning plots by axis can be found here: https://wilkelab.org/cowplot/articles/aligning_plots.html
 
 ```{r, fig.height = 7, fig.width = 6}
-#install.packages("cowplot")
+install.packages("cowplot")
 library(cowplot)
 plot_grid(NvsP2, Nutrientplot, nrow = 2, align = 'h', rel_heights = c(1.25, 1))
 

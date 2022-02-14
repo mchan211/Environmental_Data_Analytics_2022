@@ -59,11 +59,11 @@ Here are some commonly used layers for plotting in ggplot:
 * geom_density_ridges
 * geom_point
 * geom_errorbar
-* geom_smooth
+* geom_smooth #add trendline to dataset
 * geom_line
 * geom_area
-* geom_abline (plus geom_hline and geom_vline)
-* geom_text
+* geom_abline - point a to point b (plus geom_hline and geom_vline) #hline = horizontal, vline = vertical
+* geom_text #add text to plot
 
 ### Aesthetics
 Here are some commonly used aesthetic types that can be manipulated in ggplot: 
@@ -77,24 +77,27 @@ Here are some commonly used aesthetic types that can be manipulated in ggplot:
 ### Plotting continuous variables over time: Scatterplot and Line Plot
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
-# Scatterplot
+# ^for the dimensions of any plot in our rcode chunk
+
+#Scatterplot
 ggplot(EPAair, aes(x = Date, y = Ozone)) + 
-  geom_point()
+  geom_point()#point plot
 
 O3plot <- ggplot(EPAair) +
-  geom_point(aes(x = Date, y = Ozone))
+  geom_point(aes(x = Date, y = Ozone)) #assinging a plot to a label is useful - plot objects can then be printed into same window oriented how you would like
 print(O3plot)
 
 # Fix this code
 O3plot2 <- ggplot(EPAair) +
-  #geom_point(aes(x = Date, y = Ozone, color = "blue"))
-  geom_point(aes(x = Date, y = Ozone), color = "blue")
+  geom_point(aes(x = Date, y = Ozone), color = "blue") #specifying color inside the aesthetic, you are adding in a new layer
+
+#wrong way - geom_point(aes(x = Date, y = Ozone, color = "blue))
 print(O3plot2)
 
 # Add additional variables
 # How could you automatically assign a marker color to a variable? 
 PMplot <- 
-  ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year), color = Site.Name)) +
+  ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year), color = Site.Name)) + #asking R to automatically asign a specific shape to each point based on the year of the data collected
   geom_point()
 print(PMplot)
 
@@ -102,16 +105,16 @@ print(PMplot)
 PMplot.faceted <-
   ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year))) +
   geom_point() +
-  facet_wrap(vars(Site.Name), nrow = 3)
+  facet_wrap(vars(Site.Name), nrow = 3) #creating separate plots for each site, and organizing the graphs into 3 rows
 print(PMplot.faceted)
 
 # Filter dataset within plot building and facet by multiple variables
 PMplot.faceted2 <- 
-  ggplot(subset(EPAair, Site.Name == "Clemmons Middle" | Site.Name == "Leggett" |
+  ggplot(subset(EPAair, Site.Name == "Clemmons Middle" | Site.Name == "Leggett" | #can use subset within ggplot to select specific columns to graph
                   Site.Name == "Bryson City"), 
          aes(x = Month, y = PM2.5)) + 
   geom_point() +
-  facet_grid(Site.Name ~ Year) 
+  facet_grid(Site.Name ~ Year) #this is asking for each graph to be site name by year (columns = year, rows = sites selected)
 print(PMplot.faceted2)
 
 # Plot true time series with geom_line
@@ -125,7 +128,7 @@ print(PMplot.line)
 ```
 
 
-### Plotting the relationship between two continuous variables: Scatterplot
+### Plotting the relationship between TWO continuous variables: Scatterplot
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 # Scatterplot
@@ -139,7 +142,7 @@ lightvsDOfixed <-
   ggplot(PeterPaul.chem.nutrients, aes(x = irradianceWater, y = dissolvedOxygen)) +
   geom_point() +
   xlim(0, 250) +
-  ylim(0, 20)
+  ylim(0, 20) #setting axes limits to better visualize data
 print(lightvsDOfixed)
 
 # Depth in the fields of limnology and oceanography is on a reverse scale
@@ -147,14 +150,14 @@ tempvsdepth <-
   ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth)) +
   #ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth, color = daynum)) +
   geom_point() +
-  scale_y_reverse()
+  scale_y_reverse() #flips y-axis to have 0 start at the top
 print(tempvsdepth)
 
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth)) +
   geom_point() +
-  geom_smooth(method = lm) +
-  geom_abline(aes(slope = 16, intercept = 0))
+  geom_smooth(method = lm) + #this adds a layer - method = lm adds a linear model (lm) = trendline
+  geom_abline(aes(slope = 16, intercept = 0)) #need to specify the slope and intercept of line as aes()
 print(NvsP)
 
 ```
@@ -168,14 +171,17 @@ What might be more effective ways to display the information? Navigate to the bo
 # Box and whiskers plot
 Nutrientplot3 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
-  geom_boxplot(aes(color = nutrient)) # Why didn't we use "fill"?
+  geom_boxplot(aes(color = nutrient)) # Why didn't we use "fill"? - color is the contour of the shape, fill will only change the inner coloring of the boxplot
 print(Nutrientplot3)
 
 # Dot plot
 Nutrientplot4 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
   geom_dotplot(aes(color = nutrient, fill = nutrient), binaxis = "y", binwidth = 1, 
-               stackdir = "center", position = "dodge", dotsize = 2) #
+               stackdir = "center", position = "dodge", dotsize = 2) #binaxis = y is stacking the observations over y
+#binwidth sets the width of bins
+#stackdir = center --> how points are stacked (over center of boxes)
+#postions = dodge --> won't overlay of dots for same concentrations (can see the actual density of data that is at that concentration for nutrients at lake)
 print(Nutrientplot4)
 
 # Violin plot
@@ -193,12 +199,13 @@ Nutrientplot6 <-
   geom_freqpoly(aes(x = nh34), color = "blue") +
   geom_freqpoly(aes(x = no23), color = "royalblue") +
   geom_freqpoly(aes(x = po4), color = "red") 
+#problems - no legends given so don't know which nutrient is which color --> not a good or easy frequency plot 
 print(Nutrientplot6)
 
 # Using a gathered dataset
 Nutrientplot7 <-   
   ggplot(PeterPaul.chem.nutrients.gathered) +
-  geom_freqpoly(aes(x = concentration, color = nutrient))
+  geom_freqpoly(aes(x = concentration, color = nutrient)) #much better and cleaner than using freqpoly for more than one variable
 print(Nutrientplot7)
 
 # Frequency polygons have the risk of becoming spaghetti plots. 

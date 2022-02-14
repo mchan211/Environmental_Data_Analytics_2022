@@ -23,9 +23,9 @@ Opening discussion: why might we be interested in long-term observations of temp
 
 ```{r, message = FALSE}
 getwd()
-#install.packages(tidyverse)
+install.packages(tidyverse)
 library(tidyverse)
-#install.packages(lubridate)
+install.packages(lubridate)
 library(lubridate)
 NTL.phys.data <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
 
@@ -38,6 +38,8 @@ dim(NTL.phys.data)
 class(NTL.phys.data$sampledate)
 # Format sampledate as date
 NTL.phys.data$sampledate <- as.Date(NTL.phys.data$sampledate, format = "%m/%d/%y")
+
+class(NTL.phys.data$sampledate)
 ```
 
 ## Data Wrangling
@@ -63,27 +65,39 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
+> equals
+`==` 
+> does not equal
 `!=`
+> less than
 `<`
+>less than equal to
 `<=`
+>greater than
 `>`
+>greater than equal to
 `>=`
+>if you want both to be true
 `&`
+>only one or the other to be true
 `|`
 
 ```{r}
+#always want to filter using "like to like" - makes sure the data is the same class
 class(NTL.phys.data$lakeid)
 class(NTL.phys.data$depth)
 
-# matrix filtering
+# matrix filtering - this is filtering only the rows that have the value 0 in column depth
 NTL.phys.data.surface1 <- NTL.phys.data[NTL.phys.data$depth == 0,]
+NTL.phys.data.surface1
 
 # dplyr filtering
 NTL.phys.data.surface2 <- filter(NTL.phys.data, depth == 0)
 NTL.phys.data.surface3 <- filter(NTL.phys.data, depth < 0.25)
+NTL.phys.data.surface2
+NTL.phys.data.surface3
 
-# Did the methods arrive at the same result?
+# Did the methods arrive at the same result? Yes!
 head(NTL.phys.data.surface1)
 dim(NTL.phys.data.surface1)
 head(NTL.phys.data.surface2)
@@ -91,31 +105,38 @@ dim(NTL.phys.data.surface2)
 head(NTL.phys.data.surface3)
 dim(NTL.phys.data.surface3)
 
-# Choose multiple conditions to filter
+# Choose multiple conditions to filter - applies to rows FOR CHARACTER VARIABLE
 summary(NTL.phys.data$lakename)
-NTL.phys.data.PeterPaul1 <- filter(NTL.phys.data, lakename == "Paul Lake" | lakename == "Peter Lake")
+NTL.phys.data.PeterPaul1 <- filter(NTL.phys.data, lakename == "Paul Lake" | lakename == "Peter Lake") #lake can be peter OR paul lake
+
+#below good for removing 1 or a couple names from a dataset
 NTL.phys.data.PeterPaul2 <- filter(NTL.phys.data, lakename != "Central Long Lake" & 
                                      lakename != "Crampton Lake" & lakename != "East Long Lake" &
                                      lakename != "Hummingbird Lake" & lakename != "Tuesday Lake" &
                                      lakename != "Ward Lake" & lakename != "West Long Lake")
+#after %in% type a vector with all the names you are looking for instead of having to type out lakenam == multiple times
 NTL.phys.data.PeterPaul3 <- filter(NTL.phys.data, lakename %in% c("Paul Lake", "Peter Lake"))
 
-# Choose a range of conditions of a numeric or integer variable
+# Choose a range of conditions of a NUMERIC or INTEGER variable
 summary(NTL.phys.data$daynum)
-NTL.phys.data.JunethruOctober1 <- filter(NTL.phys.data, daynum > 151 & daynum < 305)
-NTL.phys.data.JunethruOctober2 <- filter(NTL.phys.data, daynum > 151, daynum < 305)
+NTL.phys.data.JunethruOctober1 <- filter(NTL.phys.data, daynum > 151 & daynum < 305) #daynum will be greater than 105 and less than 305
+NTL.phys.data.JunethruOctober2 <- filter(NTL.phys.data, daynum > 151, daynum < 305) #the comma is interpreted as using &
 NTL.phys.data.JunethruOctober3 <- filter(NTL.phys.data, daynum >= 152 & daynum <= 304)
-NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))
+NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304)) #can put number range within a vecot using : to signifiy to pull values within this list
 
 # Exercise: 
 # filter NTL.phys.data for the year 1999
 # what code do you need to use, based on the class of the variable?
 class(NTL.phys.data$year4)
+head(NTL.phys.data$year4)
 
+NTL.phys.data.1999 <- filter(NTL.phys.data, year4 == 1999)
+NTL.phys.data.1999
 # Exercise: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
-
-
+NTL.phys.data.90s <- filter(NTL.phys.data, year4 %in% c(1990:1999))
+NTL.phys.data.90s
+tail(NTL.phys.data.90s)
 ```
 Question: Why don't we filter using row numbers?
 
@@ -132,7 +153,7 @@ NTL.phys.data.depth.descending <- arrange(NTL.phys.data, desc(depth))
 # Exercise: 
 # Arrange NTL.phys.data by temperature, in descending order. 
 # Which dates, lakes, and depths have the highest temperatures?
-
+NTL.phys.data.temp.desc <- arrange(NTL.phys.data, desc(temperature_C))
 
 ```
 ### Select
@@ -140,7 +161,8 @@ NTL.phys.data.depth.descending <- arrange(NTL.phys.data, desc(depth))
 Selecting allows us to choose certain columns (variables) in our dataset.
 
 ```{r}
-NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
+NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C) #this last ratio for column names is the range of other columns that you are pulling to be shown select(df, column name, other columns)
+NTL.phys.data.temps
 
 ```
 ### Mutate
@@ -150,6 +172,7 @@ Mutating allows us to add new columns that are functions of existing columns. Op
 ```{r}
 
 NTL.phys.data.temps <- mutate(NTL.phys.data.temps, temperature_F = (temperature_C*9/5) + 32)
+NTL.phys.data.temps
 
 ```
 
@@ -177,8 +200,9 @@ Sometimes we will want to perform multiple functions on a single dataset on our 
 Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the data for Peter and Paul lakes, *then* select temperature and observation information, and *then* add a column for temperature in Fahrenheit: 
 
 ```{r}
+#pipe is like a chain of operations to use you must use '%>%'
 NTL.phys.data.processed <- 
-  NTL.phys.data %>%
+  NTL.phys.data %>% #only need to specify the name of your dataframe once in a pipe
   filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
   select(lakename, sampledate:temperature_C) %>%
   mutate(temperature_F = (temperature_C*9/5) + 32)
