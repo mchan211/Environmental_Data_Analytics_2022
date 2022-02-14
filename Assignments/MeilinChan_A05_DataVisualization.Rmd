@@ -37,9 +37,9 @@ getwd()
 library(tidyverse)
 library(cowplot)
 
-PP_Nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = FALSE)
+PP_Nutrients <- read.csv("../Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = FALSE)
 
-NN_Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+NN_Litter <- read.csv("../Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 
 #2 
 class(PP_Nutrients$sampledate)
@@ -59,8 +59,7 @@ class(NN_Litter$collectDate)
 ```{r}
 #3
 A05_theme <- theme_bw(base_size = 12) +
-  theme(axis.text = element_text(color = "black"),
-        legend.position = "right")
+  theme(axis.text = element_text(color = "black"), legend.position = "bottom")
 theme_set(A05_theme)
 ```
 
@@ -70,13 +69,12 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 4. [NTL-LTER] Plot total phosphorus (`tp_ug`) by phosphate (`po4`), with separate aesthetics for Peter and Paul lakes. Add a line of best fit and color it black. Adjust your axes to hide extreme values (hint: change the limits using `xlim()` and `ylim()`).
 
 ```{r}
-#4 - WHY DID I PUT DEPTH??
+#4
 library(ggplot2)
+
 NTL.LTER.phos.Peter <- ggplot(subset(PP_Nutrients, lakename == "Peter Lake"), 
                               aes(x = po4, y = tp_ug)) +
-  #gemo_point(aes(color = "purple")) +
-  geom_point(aes(color = depth)) +
-  scale_color_distiller(palette = "Purples", direction = 1) +
+  geom_point(color = "purple", size = 0.8, shape = "square")+
   xlim(0, 45) +
   ylim(0, 150) +
   geom_smooth(method = lm, color = "black") +
@@ -87,9 +85,7 @@ print(NTL.LTER.phos.Peter)
 
 NTL.LTER.phos.Paul <- ggplot(subset(PP_Nutrients, lakename == "Paul Lake"), 
                              aes(x = po4, y = tp_ug)) +
-  #geom_point(aes(color = "red")) +
-  geom_point(aes(color = depth)) +
-  scale_color_distiller(palette = "Greens", direction = 1) +
+  geom_point(color = "red", size = 0.8) +
   xlim(0, 35) +
   ylim(0, 150) +
   geom_smooth(method = lm, color = "black") +
@@ -100,7 +96,7 @@ print(NTL.LTER.phos.Paul)
 
 
 NTL.LTER.phos <- plot_grid(NTL.LTER.phos.Paul, NTL.LTER.phos.Peter, 
-                           nrow = 1, align = 'hv')
+                           nrow = 2, align = 'hv', rel_heights = c(3,3))
 print(NTL.LTER.phos)
 
 ```
@@ -139,16 +135,19 @@ print(NTL.TN)
 
 NTL.legend <- get_legend(NTL.temp)
 
+print(plot_grid(NTL.legend)) #only shows legend - no axes
+
 NTL.three <- plot_grid(NTL.temp + theme(legend.position = "none"),
                        NTL.TP + theme(legend.position = "none"),
                        NTL.TN + theme(legend.position = "none"),
                        nrow = 1, 
                        align = 'hv',
                        labels = c("Temp", "TP", "TN"))
-print(NTL.three)
+print(NTL.three) 
 
 
-NTL.three.leg <- plot_grid(NTL.three, NTL.temp,nrow = 2, rel_heights = c(3,0.3))
+NTL.three.leg <- plot_grid(NTL.three, NTL.legend,nrow = 2, 
+                           rel_heights = c(3,0.3))
 
 print(NTL.three.leg)
 
@@ -172,24 +171,14 @@ to remain at a steady ug level until around September when it increases.
 
 ```{r}
 #6
+class(NN_Litter$collectDate)
+NN_Litter$collectDate <- as.Date(NN_Litter$collectDate)
 
-needles.dry.violin <- ggplot(subset(NN_Litter, functionalGroup == "Needles")) +
-  geom_violin(aes(x = collectDate, y = dryMass, 
-                 color = nlcdClass)) +
-  theme(legend.position = "top", legend.text = element_text(size = 10)) +
-  xlab("Collection Year") +
-  ylab("Needles Dry Mass") +
-  labs(color = "NLCD Class") +
-  scale_color_manual(labels = c("Evergreen Forest", "Grassland Herbaceous", 
-                                "Shrub Scrub"),
-                     values = c("dark green", "blue", "orange"))
-                      
-print(needles.dry.violin)
 
 needles.dry.point <- ggplot(subset(NN_Litter, functionalGroup == "Needles")) +
   geom_point(aes(x = collectDate, y = dryMass, 
                  color = nlcdClass), alpha = 0.7) +
-  theme(legend.position = "top", legend.text = element_text(size = 10)) +
+  theme(legend.position = "bottom") +
   xlab("Collection Year") +
   ylab("Needles Dry Mass") +
   labs(color = "NLCD Class") +
@@ -201,13 +190,14 @@ print(needles.dry.point)
 
 #7
 
-facet.needles.dry <- ggplot(subset(NN_Litter, functionalGroup == "Needles")) +
-  geom_violin(aes(x = collectDate, y = dryMass)) +
+pointfacet.needles.dry <- ggplot(subset(NN_Litter, functionalGroup == "Needles")) +
+  geom_point(aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+  theme(legend.position = "none") +
   xlab("Collection Year") +
   ylab("Needles Dry Mass") +
   facet_grid(~ nlcdClass)
-  
-print(facet.needles.dry)
+
+print(pointfacet.needles.dry)
   
 
 ```
@@ -217,7 +207,6 @@ Question: Which of these plots (6 vs. 7) do you think is more effective, and why
 we are able to better see the overall spread of amount of needle dry mass 
 collected over the timespan of the data. From Plot 7, we can see that across 
 all NLCD classes, that most of the dry mass collected over the course of the 
-time period was below 10 units of dry mass. When we observe Plot 6, the violin
-plot does not distribute well with color set as the NLCD Classes. We cannot 
-accurately see the spread of the amount of needle dry mass collected over the
-period of the datatable. 
+time period was below 10 units of dry mass. When we observe Plot 6, the plot is difficult to read as some of the points overlap with each other and it is 
+difficult to see the full distribution of each NLCD Class during each collection 
+periods. 
