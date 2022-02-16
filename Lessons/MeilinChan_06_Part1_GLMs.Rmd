@@ -6,10 +6,12 @@ output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
+  
 ---
 ```{r}
 #^ above is asking outputs to be put in the console with plots being shown at right corner of the screen
 ```
+>Part 1 focuses on CONTINUOUS VARIABLES
 
 ## Objectives
 1. Describe the components of the generalized linear model (GLM)
@@ -165,6 +167,8 @@ TPregression <- lm(data = subset(PeterPaul.chem.nutrients, lakename == "Paul Lak
                    tp_ug ~ depth + dissolvedOxygen) #2 independent variables
 summary(TPregression)
 
+#lm(data frame, explanatory variable ~ dependent variables-use + to add multiple dependent variables); if using subset within the function, then make sure you do lm(data = subset())
+
 TPplot <- ggplot(subset(PeterPaul.chem.nutrients, lakename == "Paul Lake"), 
                  aes(x = dissolvedOxygen, y = tp_ug, color = depth)) +
   geom_point() +
@@ -179,6 +183,7 @@ par(mfrow = c(1,1))
 
 ## Correlation Plots
 We can also make exploratory plots of several continuous data points to determine possible relationships, as well as covariance among explanatory variables. 
+>correlation among any variables within your dataframe (visualization of which variables to add into your model)
 
 ```{r, fig.height = 3, fig.width = 4}
 #install.packages("corrplot")
@@ -190,6 +195,8 @@ PeterPaulnutrients <-
 PeterPaulCorr <- cor(PeterPaulnutrients)
 corrplot(PeterPaulCorr, method = "ellipse") #thinner circle = higher correlation; color = positive or negative correlation (red = strong negative, dark blue = strong positive)
 corrplot.mixed(PeterPaulCorr, upper = "ellipse") #value of correlation w/ elipses
+
+#corrplot shows candidates of variables to have in your regression based on AIC values
 ```
 
 ## AIC to select variables
@@ -207,7 +214,7 @@ TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen +
               temperature_C + tn_ug + po4) #mulitple variable (anything after ~ is an explanatory variable)
 
 #Choose a model by AIC in a Stepwise Algorithm
-step(TPAIC)
+step(TPAIC) #has R do one regression at a time
 #analyzing the results - shows the removal of each variable and what the AIC values are - finds the variable combo that will allow you to reach the regression of best fit
 TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
 summary(TPmodel) #3 optimal explanatory variables
