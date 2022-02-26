@@ -83,9 +83,9 @@ summary(Litter.Totals.anova) #aov(data =  dataframe, continuous dependent variab
 
 
 #results: reject null hypothesis i.e. difference between a pair of group means is statiscally significant
-#sum sqaure is deviation from each of observation from the mean 
-#mean squre = sum square/df (degrees of freedom)
-#F value = mean square plot ID/mean squre of residuals --> gives us P-value
+#sum square is deviation from each of observation from the mean 
+#mean square = sum square/df (degrees of freedom)
+#F value = mean square plot ID/mean square of residuals --> gives us P-value
 
 # Format ANOVA as lm
 Litter.Totals.anova2 <- lm(data = Litter.Totals, dryMass ~ plotID)
