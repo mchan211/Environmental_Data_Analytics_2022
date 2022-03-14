@@ -31,7 +31,7 @@ getwd()
 library(tidyverse)
 library(agricolae)
 
-ntl.lter.chemphys <- read.csv("../Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+ntl.lter.chemphys <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
 
 ntl.lter.chemphys$sampledate <- as.Date(ntl.lter.chemphys$sampledate, 
                                         format = "%m/%d/%y")
@@ -79,7 +79,7 @@ scatter.ntl.lter.july <- ggplot(ntl.lter.july,
   geom_point() +
   geom_smooth(method = lm, aes(color = "red"))+
   theme(legend.position = "none") +
-  xlab("Depth") +
+  xlab("Depth (meters)") +
   ylab("Temperature in C")+
   ylim(0,35)
 
@@ -173,7 +173,7 @@ scat.lm.lake.temp <- ggplot(ntl.lter.july,
   geom_point(alpha = 0.5, aes(color = lakename)) +
   geom_smooth(method = lm, se = FALSE, color = "black") +
   facet_wrap(vars(lakename), nrow = 3) +
-  xlab("Depth") +
+  xlab("Depth (meters)") +
   ylab("Temperature in Celsius") +
   ylim(0,35) +
   theme(legend.position = "none")
