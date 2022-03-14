@@ -163,7 +163,7 @@ GaringerOzone.monthly <- GaringerOzone.clean %>%
   mutate(Month = month(Date)) %>%
   mutate(Year = year(Date)) %>%
   mutate(F_month = my(paste0(Month, "-", Year))) %>%
-  group_by(Month, Year, F_month) %>%
+  group_by(F_month) %>%
   dplyr::summarise(Mean_Ozone = mean(Oz.ppm.clean))
 
 ```
@@ -181,7 +181,7 @@ first.month <- month(first(GaringerOzone.monthly$F_month))
 first.year <- year(first(GaringerOzone.monthly$F_month))
 
 GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$Mean_Ozone, 
-                               start = c(first.month, first.year), 
+                               start = c(2010, 1), 
                                frequency = 12)
 
 ```
@@ -210,7 +210,7 @@ library(Kendall)
 
 Garinger_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 Garinger_trend
-summary(Garinger_trend) #p-value > 0.05 - accept null hypothesis that there is no trend?
+summary(Garinger_trend) #p-value < 0.05 - reject null hypothesis that there is no trend
 
 Garinger_trend2 <- trend::smk.test(GaringerOzone.monthly.ts)
 summary(Garinger_trend2) #p-value is greater than 0.05 in all the seasons - stationary trend
@@ -247,7 +247,7 @@ plot(trend.Garinger.monthly.time)
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: Our study question was whether or not ozone concentrations at this particular station changed over time since 2010. From our seasonal Mann Kendall test, we find that we should accept our null-hypothesis that there is no change/no change in trend of ozone concentrations at this station since 2010 onwards (Score =  -54 , Var(Score) = 1500, denominator =  540, tau = -0.1, 2-sided pvalue =0.16323). From our smk.test(), we see that each season has a p-value > 0.05 and that S-value tends to be near 0 indicating a stronger stationary trend rather than strong decreasing or increasing tendencies. Also viewing the trend.Garinger.monthly.time plot, we see that overall there isn't a huge change in the trend line form 2010 - 2020, only a slight decrease.
+> Answer: Our study question was whether or not ozone concentrations at this particular station changed over time since 2010. From our seasonal Mann Kendall test, we find that we should reject our null-hypothesis that there is no change/no change in trend of ozone concentrations at this station since 2010 onwards (Score =  -77 ,Var(Score) = 1499, denominator =  539.4972, tau = -0.143, 2-sided pvalue =0.046724).Thus since 2010, there have been changes in monthly ozone concentrations. From our smk.test(), we see that each season has a p-value > 0.05 meaning within each season, there is no large change in trends. Across S-values, there are increasing and decreasing trends (some S-value is greater than 0 and other values are less than 0). However, since values are close to 0, the trend seems to be more stationary than fluctuating.
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
@@ -257,7 +257,17 @@ plot(trend.Garinger.monthly.time)
 #15
 noseason.GaringerOzone.monthly <- as.data.frame(Garinger.monthly.decomp$time.series[,2:3])
 
-ts.noseason.GaringerOzone.monthly <- ts(noseason.GaringerOzone.monthly)
+noseason.GaringerOzone.monthly <- noseason.GaringerOzone.monthly %>%
+  mutate(Date = GaringerOzone.monthly$F_month, 
+         Mean_Ozone = GaringerOzone.monthly$Mean_Ozone) %>%
+  select(Date, Mean_Ozone, trend, remainder)
+
+fmonth <- month(first(noseason.GaringerOzone.monthly$Date))
+fyear <- year(first(noseason.GaringerOzone.monthly$Date))
+
+ts.noseason.GaringerOzone.monthly <- ts(noseason.GaringerOzone.monthly, 
+                                        start = c(2010, 1),
+                                        frequency = 12)
 
 #16
 
@@ -268,4 +278,4 @@ summary(noseason.Garinger_trend) #p-value < 0.05 --> reject null hypothesis
 
 ```
 
-> Answer: The p-value is less than 0.05 indicating that we can reject the null hypothsis. This means that after the removal of the seasonal component in our data set and through the utilization of the Mann Kendall monotonic trend analysis, we can accept the hypothesis that there is a trend within our data set. Our analysis for question 16 is different from the analysis found for the Seasonal Mann Kendall as it found that p-value > 0.05, meaning we could not reject the null hypothesis. 
+> Answer: The p-value is less than 0.05 indicating that we can reject the null hypothsis. This means that after the removal of the seasonal component in our data set and through the utilization of the Mann Kendall monotonic trend analysis, we can accept the hypothesis that there is a trend within our data set. Our analysis for question 16 is the same as the analysis found for the Seasonal Mann Kendall as it found that p-value < 0.05. 
