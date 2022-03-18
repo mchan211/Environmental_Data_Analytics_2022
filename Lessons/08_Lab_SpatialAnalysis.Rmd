@@ -80,10 +80,25 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
+huc8_sf <- st_read("Data/Spatial/NCHUC8.shp")
 
+#Reveal the columns
+colnames(huc8_sf)
 
+#Check the CRS
+st_crs(huc8_sf)
+
+#Examine some records
+st_bbox(huc8_sf)
+head(huc8_sf)
 
 #View the data as a map, colored by the acreage in each
+mapView(huc8_sf, zcol = "ACRES")
+
+ggplot(data = huc8_sf) + 
+  geom_sf(aes(fill = ACRES)) + 
+  scale_fill_continuous(type = 'viridis') #to fill in colors, must use aes(fill = attribute) since it is a polygon (color=attribute will only color the outlines); use scale_fill_continous(type = 'color theme') to control the gradient of color
+
 
 
 ```
@@ -95,10 +110,16 @@ mapView(counties_sf, zcol = "AWATER")
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
 
-
+subhuc8_sf <- st_read("Data/Spatial/NCHUC8.shp") %>%
+  filter(SUBBASIN == "Upper Neuse")
 
 #Create a map
+mapview(huc8_sf, col.regions = "orange") + mapview(subhuc8_sf, zcol = "SUBBASIN", col.regions = "purple") #?????
 
+#putting color within aes() is for applying a color to specific feature values; if you just want a color for every attribute, put command outside of aes()
+ggplot() +
+  geom_sf(data = huc8_sf, fill = 'orange') +
+  geom_sf(data = subhuc8_sf, fill = 'purple')
 
 ```
 
@@ -114,18 +135,30 @@ The URL '<https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Ene
 
 ```{r}
 #Compute HUC8 wind energy
-
-
+HUC_wind <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv', colClasses = c('HUC_12' = 'factor'))
 
 
 #Join to HUC_8 features
 
+HUC_wind <- HUC_wind %>%
+  mutate(HUC_8 = substr(HUC_12,1,8)) %>%
+  group_by(HUC_8) %>%
+  summarize(SumWindEnergy = sum(AvgWindEnergy))
 
+library(tidyverse)
+library(dplyr)
 
+huc_wind.8 <- left_join(HUC_wind, huc8_sf)
+
+#alternative
+#huc_wind.8 <- merge(x = huc8_sf, y = HUC_wind, by.x = 'HUC_8', by.y = 'HUC_8') - especialliy if the column names across data sets are different, need to specify which ones
 
 #View the outputs
+colnames(huc_wind.8)
+summary(huc_wind.8)
 
-
+ggplot(data = huc_wind.8) +
+  geom_sf()
 
 ```
 
@@ -134,7 +167,7 @@ Aggregate the HUC_8 data on the `DWQ_Basin` attribute, computing the sum of the 
 
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
-
+basin.huc_8 <- 
 
 
 #Summarize on DWQ Basin value
@@ -155,8 +188,8 @@ On top of projecting any geographic data to adjust for the limitations of the so
 ```{r Transform the datasets to other coordinate reference systems}
 #Convert all to UTM Zone 17 (crs = 26917)
 epa_sf_utm <-      st_transform(epa_pm25_sites_sf, crs = 26917)
-counties_sf_utm <- 
-state_sf_utm <-    
+counties_sf_utm <- st_transform(counties_sf, crs = 26917)
+state_sf_utm <-    st_transform(state_sf, crs =26917)
 huc8_sf_utm <-     
 huc2_utm <-        
 ```
@@ -172,11 +205,11 @@ Select the counties in the "Triangle" (Chatham, Durham, Orange, and Wake). Then 
 
 
   
-#Grab the intersecting HUC_8s
+#Grab the intersecting HUC_8s - use of st_intersects()
 
 
 
-#Intersect the HUC_8s
+#Intersect the HUC_8s - use of st_intersection() which works well with piping
 
 
 
