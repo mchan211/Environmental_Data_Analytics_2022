@@ -42,8 +42,6 @@ library(sf)
 library(leaflet)
 library(mapview)
 
-library(dplyr)
-
 ```
 
 ### Read (and filter) county features into an sf dataframe and plot
@@ -66,17 +64,12 @@ class(sf.Nebraska.2018)
 crs.Nebraska.2018 <- st_crs(sf.Nebraska.2018) # [\"EPSG\",4269]]
 class(crs.Nebraska.2018)
 
-sfc.Nebraska.2018 <- st_sfc(crs.Nebraska.2018$geometry, crs=4269)
-
-class(sfc.Nebraska.2018)
 
 #5. Plot the data
-summary(sfc.Nebraska.2018)
 
-mapview(sfc.Nebraska.2018)
+mapview(sf.Nebraska.2018)
 
 ggplot() + 
-  geom_sf(data=sfc.Nebraska.2018)+
   geom_sf(data=sf.Nebraska.2018)
   
           
