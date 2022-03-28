@@ -237,21 +237,16 @@ ggplot() +
 ```{r}
 #9
 
-ashe.2015 <- scrape.NCDEQ('2015','01-11-010')
-ashe.2016 <- scrape.NCDEQ('2016','01-11-010')
-ashe.2017 <- scrape.NCDEQ('2017','01-11-010')
-ashe.2018 <- scrape.NCDEQ('2018','01-11-010')
-ashe.2019 <- scrape.NCDEQ('2019','01-11-010')
+year1019 <- seq(2010,2019)
+ashe.pswid <- '01-11-010'
 
-ashe.15.16 <- full_join(ashe.2015, ashe.2016)
-ashe.15.17 <- full_join(ashe.15.16, ashe.2017)
-ashe.15.18 <- full_join(ashe.15.17, ashe.2018)
-ashe.15.19 <- full_join(ashe.15.18, ashe.2019)
+ashe.10.19 <- lapply(X=year1019, FUN = scrape.NCDEQ, pswid_num = ashe.pswid) %>% bind_rows()
 
-ggplot(ashe.15.19, aes(x=Date, y =Avg_Max_Withdrawals))+
+
+ggplot(ashe.10.19, aes(x=Date, y =Avg_Max_Withdrawals))+
   geom_line()+
   geom_smooth(method="loess",se=FALSE) +
-  labs(title = "Asheville Water Withdrawals from 2015-2019",
+  labs(title = "Asheville Water Withdrawals from 2010-2019",
        y="Avg. Max. Withdrawals (mgd)",
        x="Date")
 
