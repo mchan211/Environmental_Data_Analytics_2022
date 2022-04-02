@@ -110,87 +110,21 @@ max.withdrawals.mgd #dim 1:12; 1st value = 36.0100
 
 ```{r create.a.dataframe.from.scraped.data}
 #4
-df_maxwith <- data.frame("Month" = c("Jan", "May", "Sep", "Feb", 
-                                     "June","Oct", "March", "July", "Nov", 
-                                     "April", "Aug", "Dec"),
-                         "Year" = rep(2020, 12),
-                         "Avg_Max_Withdrawals" = as.numeric(max.withdrawals.mgd),
-                         "PSWID" = pswid,
-                         "Water_System" = rep(water.system.name),
-                         "Ownership" = rep(ownership)
-                         )
 
-df_maxwith <- df_maxwith %>%
-  mutate("Date" = my(paste(Month, "-", Year))) %>%
-  select(Date, Avg_Max_Withdrawals, 
-         PSWID, Water_System, Ownership)
-
-df_maxwith <- df_maxwith[order(df_maxwith$Date, decreasing = FALSE),]
 
 
 #5
-maxdaily_plot <- ggplot(df_maxwith, aes(x=Date, y=Avg_Max_Withdrawals)) +
-  geom_line()+
-  geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2020 Water Withdrawals in",
-                     water.system.name,ownership),
-       y="Avg. Max. Withdrawals (mgd)",
-       x="Date")
-  
-plot(maxdaily_plot)
 
 
 
 ```
 
-6. Note that the PSWID and the year appear in the web address for the page we scraped. Construct a function using your code above that can scrape data for any PSWID and year for which the NC DEQ has data. **Be sure to modify the code to reflect the year and site scraped**.
+6. Note that the PSWID and the year appear in the web address for the page we scraped. Construct a function using your code above that can scrape data for any PWSID and year for which the NC DEQ has data. **Be sure to modify the code to reflect the year and site scraped**.
 
 ```{r construct.a.scraping.function}
 #6.
 
-scrape.NCDEQ <- function(the_year,pswid_num){
-  the_url <- paste0("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=",
-                    pswid_num,"&year=",the_year)
-  #link website
-  the_website <- read_html(the_url)
-  
-  #locating elements
-  system.name.fun <- the_website %>%
-  html_nodes('div+ table tr:nth-child(1) td:nth-child(2)') %>%
-  html_text()
-  
-  pswid.fun <- the_website %>%
-  html_nodes('td tr:nth-child(1) td:nth-child(5)') %>%
-  html_text()
-  
-  ownership.fun <- the_website %>%
-  html_nodes('div+ table tr:nth-child(2) td:nth-child(4)') %>%
-  html_text()
-  
-  max.withdrawals.fun <- the_website %>%
-  html_nodes('th~ td+ td') %>%
-  html_text()
-  
-  month <- c("Jan", "May", "Sep", "Feb", "June",
-             "Oct", "March", "July", "Nov", "April", "Aug", "Dec")
-  
-  the_df <- data.frame("Month" = month,
-                         "Year" = rep(the_year, 12),
-                         "Avg_Max_Withdrawals" = as.numeric(max.withdrawals.fun),
-                         "PSWID" = pswid.fun,
-                         "Water_System" = rep(system.name.fun),
-                         "Ownership" = rep(ownership.fun)
-                         )
-  
-  the_df <- the_df %>%
-  mutate("Date" = my(paste(Month, "-", Year))) %>%
-  select(Date, Avg_Max_Withdrawals, PSWID, Water_System, Ownership)
-  
-  the_df <- the_df[order(the_df$Date, decreasing = FALSE),]
-  
-  return(the_df)
-  
-}
+
 
 ```
 
@@ -198,36 +132,15 @@ scrape.NCDEQ <- function(the_year,pswid_num){
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7
-NDEQ_15 <- scrape.NCDEQ('2015','03-32-010')
 
-summary(NDEQ_15)
-
-ggplot(NDEQ_15, aes(x=Date, y =Avg_Max_Withdrawals))+
-  geom_line()+
-  geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2015 Water Withdrawals in",
-                     water.system.name,ownership),
-       y="Avg. Max. Withdrawals (mgd)",
-       x="Date")
 
 ```
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares the Asheville to Durham's water withdrawals.
 
-```{r fetch.and.plot.Asheville.2015.data}
+```{r fetch.and.plot.Durham.2015.data}
 #8
-ashe.2015 <- scrape.NCDEQ('2015','01-11-010')
 
-ggplot() + 
-  geom_line(data=ashe.2015, 
-            aes(x = Date, y =Avg_Max_Withdrawals, color = "Asheville")) +
-  geom_line(data=NDEQ_15, 
-            aes(x = Date, y =Avg_Max_Withdrawals, color = "Durham")) +
-  labs(title = "2015 Water Withdrawals in NC Municipalities",
-       y="Avg. Max. Withdrawals (mgd)",
-       x="Date") +
-  theme(legend.position = "bottom")
-  
 
 ```
 
@@ -237,21 +150,7 @@ ggplot() +
 ```{r}
 #9
 
-year1019 <- seq(2010,2019)
-ashe.pswid <- '01-11-010'
-
-ashe.10.19 <- lapply(X=year1019, FUN = scrape.NCDEQ, pswid_num = ashe.pswid) %>% bind_rows()
-
-
-ggplot(ashe.10.19, aes(x=Date, y =Avg_Max_Withdrawals))+
-  geom_line()+
-  geom_smooth(method="loess",se=FALSE) +
-  labs(title = "Asheville Water Withdrawals from 2010-2019",
-       y="Avg. Max. Withdrawals (mgd)",
-       x="Date")
 
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
-
-> Yes, Asheville's water usage over time has generally increased from 2015 - 2019
