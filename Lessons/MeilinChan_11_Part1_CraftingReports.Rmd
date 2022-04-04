@@ -86,7 +86,7 @@ etc.
 
 Create a table below that details the example datasets we have been using in class. The first column should contain the names of the datasets and the second column should include some relevant information about the datasets. (Hint: use the cheat sheets to figure out how to make a table in Rmd)
 
-```{r leaf litter data, echo = FALSE, message = FALSE}
+```{r leaf litter data, echo = FALSE, message = FALSE, warning=FALSE}
 df.leaf.litter <- read.csv("../Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv")
 
 leaf.mass <- df.leaf.litter[1:10,3:5]
@@ -104,7 +104,7 @@ Create an R chunk below that installs the package `knitr`. Instead of commenting
 #can also edit output options in the little tool widget in the upper right corner of chunk
 ```
 
-```{r install.packages, eval=FALSE, message=FALSE}
+```{r install.packages, eval=FALSE, message=FALSE, warning = FALSE}
 #don't want to fully knit in chunks that have install packages function
 install.packages('knitr')
 ```
@@ -113,7 +113,7 @@ install.packages('knitr')
 
 Create an R chunk below called "setup" that checks your working directory, loads the packages `tidyverse`, `lubridate`, and `knitr`, and sets a ggplot theme. Remember that you need to disable R throwing a message, which contains a check mark that cannot be knitted.
 
-```{r setup, include = FALSE, message = FALSE}
+```{r setup, include = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(message = FALSE)
 getwd()
 library('tidyverse')
@@ -130,7 +130,7 @@ theme_set(mytheme)
 
 Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, and set the date column to a date format.
 
-```{r load in data, echo = FALSE, message = FALSE}
+```{r load in data, echo = FALSE, message = FALSE, warning = FALSE}
 NTL.LTER <- read.csv("../Data/Raw/NTL-LTER_Lake_Nutrients_Raw.csv", stringsAsFactors = TRUE)
 
 NTL.LTER$sampledate <- as.Date(NTL.LTER$sampledate, format = "%m/%d/%y")
@@ -150,7 +150,7 @@ Create an R chunk below to create a processed dataset do the following operation
 -   Include only surface samples (depth = 0 m)
 -   Drop rows with missing data
 
-```{r lakes data}
+```{r lakes data, echo = FALSE, message = FALSE, warning = FALSE}
 PP.lakes <- read.csv("../Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
 
 PP.lakes.filtered <- PP.lakes %>%
@@ -163,7 +163,7 @@ PP.lakes.filtered <- PP.lakes %>%
 
 Create a second R chunk to create a summary dataset with the mean, minimum, maximum, and standard deviation of total nitrogen concentrations for each lake. Create a second summary dataset that is identical except that it evaluates total phosphorus. Customize the chunk options such that the code is run but not displayed in the final document.
 
-```{r lake nitrogen, include = FALSE, message = FALSE}
+```{r lake nitrogen, include = FALSE, message = FALSE, warning = FALSE}
 N.Peter.summary <- PP.lakes.filtered %>%
   filter(lakename == "Peter Lake") %>%
   mutate(Mean.NH34 = mean(nh34),  Min.NH34 = min(nh34), 
@@ -185,7 +185,7 @@ N.Paul.summary <- PP.lakes.filtered %>%
           Mean.NO23,   Min.NO23,   Max.NO23, StanDev.NO23, Sum.N)
 ```
 
-```{r lake phosphorus, include = FALSE, message = FALSE}
+```{r lake phosphorus, include = FALSE, message = FALSE, warning = FALSE}
 P.Peter.summary <- PP.lakes.filtered %>%
   filter(lakename == "Peter Lake") %>%
   mutate(Mean.PO4 = mean(po4), Min.PO4 = min(po4), 
@@ -202,7 +202,7 @@ P.Paul.summary <- PP.lakes.filtered %>%
         Mean.PO4, Min.PO4, Max.PO4, StanDev.PO4)
 ```
 
-```{r lake nutrient summaries, echo = FALSE, message = FALSE}
+```{r lake nutrient summaries, echo = FALSE, message = FALSE, warning = FALSE}
 N.PP.summary <- full_join(N.Peter.summary,N.Paul.summary)
 
 P.PP.summary <- full_join(P.Peter.summary,P.Paul.summary)
@@ -210,7 +210,7 @@ P.PP.summary <- full_join(P.Peter.summary,P.Paul.summary)
 
 Create a third R chunk that uses the function `kable` in the knitr package to display two tables: one for the summary dataframe for total N and one for the summary dataframe of total P. Use the `caption = " "` code within that function to title your tables. Customize the chunk options such that the final table is displayed but not the code used to generate the table.
 
-```{r kable, echo = FALSE, message = FALSE}
+```{r kable, echo = FALSE, message = FALSE, warning = FALSE}
 N.table <- N.PP.summary[]
 knitr::kable(N.table, 
  caption = "Nitrogen content of Peter and Paul Lake")
@@ -222,7 +222,7 @@ knitr::kable(P.table,
 ```
 
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
-```{r nitrogen plot, echo=FALSE, message=FALSE}
+```{r nitrogen plot, echo = FALSE, message = FALSE, warning = FALSE}
 N.PP.summary <- N.PP.summary %>%
   mutate(Year = year(sampledate)) %>%
   mutate(Month = month(sampledate))%>%

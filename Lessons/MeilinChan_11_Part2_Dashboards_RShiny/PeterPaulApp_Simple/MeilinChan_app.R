@@ -1,9 +1,10 @@
 #### Load packages ----
 library(shiny)
 library(tidyverse)
+getwd()
 
 #### Load data ----
-nutrient_data <- read_csv("Data/NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv")
+nutrient_data <- read_csv("Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv")
 nutrient_data$sampledate <- as.Date(nutrient_data$sampledate, format = "%Y-%m-%d")
 nutrient_data <- nutrient_data %>%
   filter(depth_id > 0) %>%
@@ -42,8 +43,7 @@ server <- function(input, output) {
           theme_classic(base_size = 14) +
           scale_shape_manual(values = c(21, 24)) +
           labs(x = "Date", y = expression(Concentration ~ (mu*g / L)), shape = "Lake", fill = "Depth ID") +
-          scale_fill_distiller(palette = "YlOrBr", guide = "colorbar", direction = 1)
-          #scale_fill_viridis_c(option = "viridis", begin = 0, end = 0.8, direction = -1)
+          scale_fill_viridis_c(option = "viridis", begin = 0, end = 0.8, direction = -1)
       })
        
        
